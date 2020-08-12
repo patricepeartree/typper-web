@@ -1,0 +1,37 @@
+name: Build and Deploy to Firebase
+
+on:
+  workflow_dispatch:
+    inputs:
+      branch:
+        description: 'Branch'
+        default: 'master'
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        node-version: [12.8.1]
+    steps:
+      - name: Checkout branch ${{ github.ref }}
+        uses: actions/checkout@v2
+      - name: Setup Node.js v${{ matrix.node-version }}
+        uses: actions/setup-node@v2.1.1
+        with:
+          node-version: ${{ matrix.node-version }}
+      - name: Install packages
+        run: npm ci
+      - name: Build project
+        run: npm run build
+      - name: Generate deploy message
+        id: generate_deploy_message
+        run: echo "::set-output name=deploy_message::$(echo "${GITHUB_REF#refs/heads/} (v$(node -p "require('./package').version"))")"
+      - name: Deploy to Firebase
+        uses: w9jds/firebase-action@v1.5.0
+        with:
+          args: deploy --only hosting -m \"$DEPLOY_MESSAGE\"
+        env:
+          FIREBASE_TOKEN: ${{ secrets.FIREBASE_CI_TOKEN }}
+          PROJECT_ID: ${{ secrets.FIREBASE_PROJECT }}
+          DEPLOY_MESSAGE: ${{ steps.generate_deploy_message.outputs.deploy_message }}

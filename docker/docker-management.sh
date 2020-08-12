@@ -1,8 +1,8 @@
 #!/bin/bash
 
 IMAGE_NAME=node:12.8.1
-PROJECT_SRC="//c/MyProjects/typper-web"
-HOST_PORT=3001
+PROJECT_SRC="/home/patricia/Projects/typper-web"
+HOST_PORT=3010
 CONTAINER_NAME=typper-web-local
 
 #######################################################################################################################
@@ -14,6 +14,7 @@ usage() {
 	echo "Commands:"
 	echo "  start     Run a new container for this project. "
 	echo "  stop      Stop and remove the container created using \"start\"."
+	echo "  attach    Attach to the command line of the container created using \"start\"."
 	exit 0
 }
 
@@ -23,9 +24,13 @@ start() {
 	docker run -tid -w //usr/src -v "$PROJECT_SRC":/usr/src -p "$HOST_PORT":3000 -e CHOKIDAR_USEPOLLING=true --name "$CONTAINER_NAME" "$IMAGE_NAME" //bin/bash
 }
 
-stop () {
+stop() {
 	docker stop "$CONTAINER_NAME"
 	docker rm "$CONTAINER_NAME"
+}
+
+attach() {
+	docker attach "$CONTAINER_NAME"
 }
 
 wrongCommand() {
@@ -37,5 +42,6 @@ wrongCommand() {
 case "$1" in
     "start") start;;
     "stop") stop;;
+	"attach") attach;;
 	*) wrongCommand "$1";;
 esac
