@@ -1,11 +1,15 @@
 const SHOOTING_ZONE = -1;
 const ENEMY = 1;
 const SHOT = ENEMY + 1;
-const GAME_OVER = SHOT + 1;
+const LOCKED_ENEMY = SHOT + 1;
+const LOCKED_ENEMY_SHOT = LOCKED_ENEMY + 1;
+const GAME_OVER = LOCKED_ENEMY_SHOT + 1;
 
 export default {
     SHOOTING_ZONE,
     ENEMY,
     SHOT,
+    LOCKED_ENEMY,
+    LOCKED_ENEMY_SHOT,
     GAME_OVER
 };

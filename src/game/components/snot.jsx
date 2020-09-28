@@ -11,7 +11,7 @@ import { ZIndexes } from "../constants";
 
 
 function Snot(props) {
-    const { id, initialPosX, initialPosY, sin, cos } = props;
+    const { id, initialPosX, initialPosY, sin, cos, isFromLockedEnemy } = props;
 
     const gameIsPaused = useSelector(state => state.gameIsPaused);
     const dispatch = useDispatch();
@@ -48,7 +48,13 @@ function Snot(props) {
     useCollisionDetection(elemRef, "hero", hitHero);
 
     return (
-        <Image ref={elemRef} src={SnotImage} position={position} height={height} />
+        <Image
+            ref={elemRef}
+            src={SnotImage}
+            position={position}
+            height={height}
+            isFromLockedEnemy={isFromLockedEnemy}
+        />
     );
 }
 
@@ -66,7 +72,7 @@ const Image = styled.img.attrs(props => ({
         height: `${props.height}px`,
         top: props.position.y,
         left: props.position.x,
-        zIndex: ZIndexes.SHOT
+        zIndex: props.isFromLockedEnemy ? ZIndexes.LOCKED_ENEMY_SHOT : ZIndexes.SHOT
     },
 }))`
     position: absolute;

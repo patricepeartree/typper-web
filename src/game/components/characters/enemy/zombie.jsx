@@ -35,6 +35,7 @@ function Zombie(props) {
 
     const closestEnemyForLetter = useSelector(state => selectClosestEnemyForFirstLetter(state, word));
     const myNextIndex = useSelector(state => selectNextIndex(state, id));
+    const lockedEnemy = useSelector(state => state.lockedEnemy);
     const gameIsPaused = useSelector(state => state.gameIsPaused);
     const dispatch = useDispatch();
 
@@ -85,12 +86,15 @@ function Zombie(props) {
             height={height}
             lane={lane}
             posY={posY}
+            isLockedEnemy={lockedEnemy === id}
         >
             <ZombieTile src={tileSrc} invert={lane > 50} />
             <EnemyWordContainer>
                 <EnemyWord
                     word={word}
                     nextIndex={myNextIndex}
+                    isActive={lockedEnemy === id}
+                    isDisabled={lockedEnemy !== null && lockedEnemy !== id}
                 />
             </EnemyWordContainer>
         </ZombieContainer>
@@ -102,7 +106,7 @@ const ZombieContainer = styled.div.attrs(props => ({
         height: `${props.height}px`,
         top: props.posY,
         left: `${props.lane}%`,
-        zIndex: ZIndexes.ENEMY
+        zIndex: props.isLockedEnemy ? ZIndexes.LOCKED_ENEMY : ZIndexes.ENEMY
     },
 }))`
     position: absolute;

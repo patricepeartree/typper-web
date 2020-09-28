@@ -26,7 +26,7 @@ jobs:
         run: npm run build
       - name: Generate deploy message
         id: generate_deploy_message
-        run: echo "::set-output name=deploy_message::$(echo "${GITHUB_REF#refs/heads/} (v$(node -p "require('./package').version"))")"
+        run: echo "::set-output name=deploy_message::$(echo "${GITHUB_REF#refs/heads/} ($GITHUB_SHA)")"
       - name: Deploy to Firebase
         uses: w9jds/firebase-action@v1.5.0
         with:

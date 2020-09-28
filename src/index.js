@@ -11,6 +11,8 @@ import store from './game/store';
 import "./assets/fonts/zombie.ttf";
 import "./assets/fonts/Creepster-Regular.ttf";
 
+import { logGameStart } from "./firebase-events";
+
 // if (process.env.NODE_ENV !== 'production') {
 //   const whyDidYouRender = require('@welldone-software/why-did-you-render');
 //   whyDidYouRender(React, {
@@ -19,6 +21,8 @@ import "./assets/fonts/Creepster-Regular.ttf";
 //     // exclude: [/^Link/, /^Route/, /^BrowserRouter/],
 //   });
 // }
+
+logGameStart();
 
 ReactDOM.render(
     <Provider store={store}>

@@ -20,6 +20,8 @@ import {
 
 import { getRandomLaneForEnemy } from "../../behaviour";
 
+import { logGameOver } from "../../../firebase-events";
+
 
 const initialState = {
     gameIsPaused: false,
@@ -44,6 +46,10 @@ function rootReducer(state = initialState, action) {
             };
 
         case SPAWN_ENEMY: {
+            if (state.gameOver) {
+                return state;
+            }
+
             const id = new Date().getTime().toString();
             const lane = getRandomLaneForEnemy();
             const word = randomWords();
@@ -141,7 +147,8 @@ function rootReducer(state = initialState, action) {
                 x,
                 y,
                 sin: Math.sin(angle),
-                cos: Math.cos(angle)
+                cos: Math.cos(angle),
+                isFromLockedEnemy: enemyId === state.lockedEnemy
             }];
             return { ...state, enemyShots };
         }
@@ -159,6 +166,8 @@ function rootReducer(state = initialState, action) {
             const heroLife = state.heroLife - shot.damage;
             
             if (heroLife <= 0) {
+                logGameOver(state.killedEnemies.size);
+
                 return {
                     ...initialState,
                     gameOver: true,

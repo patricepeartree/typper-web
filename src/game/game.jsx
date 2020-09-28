@@ -55,7 +55,7 @@ function Game() {
     return (
         <React.Fragment>
             <Background />
-            {enemyShots.map(({ id, x, y, sin, cos }) =>
+            {enemyShots.map(({ id, x, y, sin, cos, isFromLockedEnemy }) =>
                 <Snot
                     key={id}
                     id={id}
@@ -63,6 +63,7 @@ function Game() {
                     initialPosY={y}
                     sin={sin}
                     cos={cos}
+                    isFromLockedEnemy={isFromLockedEnemy}
                 />
             )}
             {enemies.map(({ id, lane, word }) =>
