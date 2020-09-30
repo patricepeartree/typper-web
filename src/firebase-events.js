@@ -18,10 +18,9 @@ export function logGameOver(killCount) {
 }
 
 function logEvent(eventName, eventParams) {
-    if (window.firebase) {
-        const analytics = window.firebase.analytics();
-        if (analytics) {
-            analytics.logEvent(eventName, eventParams);
-        }
+    try {
+        window.firebase.analytics().logEvent(eventName, eventParams);
+    } catch (e) {
+        console.warn("Unable to log event to Firebase Analytics:", e);
     }
 }

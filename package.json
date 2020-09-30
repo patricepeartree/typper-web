@@ -1,6 +1,6 @@
 {
   "name": "typper-web",
-  "version": "0.2.0-beta",
+  "version": "0.2.1-beta",
   "private": true,
   "dependencies": {
     "@welldone-software/why-did-you-render": "3.5.0",
@@ -20,7 +20,9 @@
     "start": "react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test",
-    "eject": "react-scripts eject"
+    "eject": "react-scripts eject",
+    "serve": "npm run build && firebase serve --only hosting --host 0.0.0.0"
+
   },
   "eslintConfig": {
     "extends": "react-app"

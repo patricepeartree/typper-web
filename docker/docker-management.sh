@@ -2,7 +2,8 @@
 
 IMAGE_NAME=node:12.8.1
 PROJECT_SRC="/home/patricia/Projects/typper-web"
-HOST_PORT=3010
+HOST_PORT=3000
+FIREBASE_SERVE_PORT=5000
 CONTAINER_NAME=typper-web-local
 
 #######################################################################################################################
@@ -21,7 +22,7 @@ usage() {
 [[ $# -eq 0 ]] && usage
 
 start() {
-	docker run -tid -w //usr/src -v "$PROJECT_SRC":/usr/src -p "$HOST_PORT":3000 -e CHOKIDAR_USEPOLLING=true --name "$CONTAINER_NAME" "$IMAGE_NAME" //bin/bash
+	docker run -tid -w //usr/src -v "$PROJECT_SRC":/usr/src -p "$HOST_PORT":3000 -p "$FIREBASE_SERVE_PORT":5000 -e CHOKIDAR_USEPOLLING=true --name "$CONTAINER_NAME" "$IMAGE_NAME" //bin/bash
 }
 
 stop() {
