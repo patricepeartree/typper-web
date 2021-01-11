@@ -2,12 +2,13 @@ import React, { useState, useRef, useCallback } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import styled, { keyframes } from 'styled-components';
 
-import { useAnimationFrame, useCollisionDetection, useHeightBasedOnWindow } from '../../custom-hooks';
-import { inflictDamage } from '../store/actions';
-import { moveMissile } from "../behaviour";
+import { useAnimationFrame, useCollisionDetection, useHeightBasedOnWindow } from "@custom-hooks";
+import { inflictDamage } from '@game/store/actions';
+import { moveShot } from "@game/behaviour";
 
-import SnotImage from '../../assets/snot.png';
-import { ZIndexes } from "../constants";
+import { ZIndexes } from "@game/constants";
+
+import SnotImage from "@assets/snot.png";
 
 
 function Snot(props) {
@@ -27,13 +28,13 @@ function Snot(props) {
 
     function move(deltaT) {
         setPosition(previousPos => {
-            const missile = {
+            const shot = {
                 x: previousPos.x,
                 y: previousPos.y,
                 sin,
                 cos
             };
-            const { x, y } = moveMissile(missile, deltaT);
+            const { x, y } = moveShot(shot, deltaT);
             return { x, y };
         });
     }

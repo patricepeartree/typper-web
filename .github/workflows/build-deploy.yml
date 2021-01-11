@@ -3,12 +3,11 @@ name: Build and Deploy to Firebase
 on:
   workflow_dispatch:
     inputs:
-      branch:
-        description: 'Branch'
-        default: 'master'
+      custom_deploy_message:
+        description: 'Custom Deploy Message'
 
 jobs:
-  build:
+  build-deploy:
     runs-on: ubuntu-latest
     strategy:
       matrix:
@@ -17,7 +16,7 @@ jobs:
       - name: Checkout branch ${{ github.ref }}
         uses: actions/checkout@v2
       - name: Setup Node.js v${{ matrix.node-version }}
-        uses: actions/setup-node@v2.1.1
+        uses: actions/setup-node@v2.1.4
         with:
           node-version: ${{ matrix.node-version }}
       - name: Install packages
@@ -26,7 +25,7 @@ jobs:
         run: npm run build
       - name: Generate deploy message
         id: generate_deploy_message
-        run: echo "::set-output name=deploy_message::$(echo "${GITHUB_REF#refs/heads/} ($GITHUB_SHA)")"
+        run: echo "::set-output name=deploy_message::$(echo "$([[ ! -z "${{ github.event.inputs.custom_deploy_message }}" ]] && echo "${{ github.event.inputs.custom_deploy_message }} - ")${GITHUB_REF#refs/heads/} ($GITHUB_SHA)")"
       - name: Deploy to Firebase
         uses: w9jds/firebase-action@v1.5.0
         with:

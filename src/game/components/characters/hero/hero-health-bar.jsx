@@ -2,6 +2,8 @@ import React, { useRef } from 'react';
 import styled from 'styled-components';
 import { useSelector } from "react-redux";
 
+import Heart from "@assets/heart.png";
+
 
 const HealthBarDescriptor = Object.freeze({
     COLOR: (heroLife) => {
@@ -49,6 +51,7 @@ function HeroHealthBar(props) {
                 duration={healthBarShadowDescriptor.DURATION}
                 color={healthBarShadowDescriptor.COLOR}
             />
+            <PositionedHeart src={Heart} />
         </HealthBarWrapper>
     );
 }
@@ -67,7 +70,7 @@ const GenericHealthBar = styled.div`
     ${props => `
     background-color: ${props.color};
     width: ${props.width}%;
-    transition: width ${props.duration}ms${props.animateColor ? `, background-color ${props.duration}ms`: ""};
+    transition: width ${props.duration}ms${props.animateColor ? `, background-color ${props.duration}ms` : ""};
     `}
 `;
 
@@ -77,6 +80,15 @@ const HealthBar = styled(GenericHealthBar)`
 
 const HealthBarShadow = styled(GenericHealthBar)`
     z-index: 1;
+`;
+
+const PositionedHeart = styled.img`
+    position: absolute;
+    height: 250%;
+    transform: translate(-70%, -50%);
+    top: 50%;
+    z-index: 3;
+    filter: saturate(1.5) contrast(1.5);
 `;
 
 export default React.memo(HeroHealthBar);

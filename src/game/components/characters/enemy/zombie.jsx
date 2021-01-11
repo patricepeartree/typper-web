@@ -3,17 +3,15 @@ import { useDispatch, useSelector } from 'react-redux';
 import { createSelector } from 'reselect';
 import styled from 'styled-components';
 
-import { setClosestEnemy, enemyShoot } from '../../../store/actions';
-import { useAnimationFrame, useCollisionDetection, useHeightBasedOnWindow, useSimpleTileAnimation } from '../../../../custom-hooks';
-import { calculateEnemyShootPosition } from '../../../behaviour';
+import { setClosestEnemy, enemyShoot, enemyUnmountedAt } from '@game/store/actions';
+import { useAnimationFrame, useCollisionDetection, useHeightBasedOnWindow } from "@custom-hooks";
+import { calculateEnemyShootPosition } from '@game/behaviour';
 
+import AnimatedZombie, { State } from "@game/components/animated-characters/zombie";
 import EnemyWord from './enemy-word';
 
-import { ENEMY_VELOCITY, ENEMY_SHOOT_INTERVAL, ZIndexes, ENEMY_TO_WINDOW_HEIGHT_RATIO } from '../../../constants';
-import { MaleZombie } from '../../../../assets/zombie';
+import { ENEMY_VELOCITY, ENEMY_SHOOT_INTERVAL, ZIndexes, ENEMY_TO_WINDOW_HEIGHT_RATIO } from '@game/constants';
 
-
-const TIME_BETWEEN_TILES = 100;
 
 const selectClosestEnemyForFirstLetter = createSelector(
     state => state.enemyByFirstLetter,
@@ -40,7 +38,6 @@ function Zombie(props) {
     const dispatch = useDispatch();
 
     const [posY, setPosY] = useState(0);
-    const [activeTiles] = useState(MaleZombie.Tiles.WALK);
 
     const height = useHeightBasedOnWindow(ENEMY_TO_WINDOW_HEIGHT_RATIO);
 
@@ -77,18 +74,23 @@ function Zombie(props) {
         }
     }, [dispatch, id, word, closestEnemyForLetter, posY]);
 
-    const tileSrc = useSimpleTileAnimation(activeTiles, TIME_BETWEEN_TILES);
+    useEffect(() => {
+        const elem = elemRef.current;
+        return () => {
+            const { top, left } = elem.getBoundingClientRect();
+            dispatch(enemyUnmountedAt(id, left, top));
+        }
+    }, [dispatch, id]);
 
     return (
         <ZombieContainer
             ref={elemRef}
-            src={tileSrc}
             height={height}
             lane={lane}
             posY={posY}
             isLockedEnemy={lockedEnemy === id}
         >
-            <ZombieTile src={tileSrc} invert={lane > 50} />
+            <AnimatedZombie state={State.WALK} invert={lane > 50} />
             <EnemyWordContainer>
                 <EnemyWord
                     word={word}
@@ -111,11 +113,6 @@ const ZombieContainer = styled.div.attrs(props => ({
 }))`
     position: absolute;
     transform: translateY(-100%);
-`;
-
-const ZombieTile = styled.img`
-    height: 100%;
-    ${props => props.invert && "transform: scaleX(-1)"}
 `;
 
 const EnemyWordContainer = styled.span`

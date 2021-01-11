@@ -6,24 +6,31 @@
 
 import randomWords from "random-words";
 
-import { HERO_LIFE, SHOT_DAMAGE } from "../../constants/game-constants";
+import { HERO_LIFE, SHOT_DAMAGE } from "@game/constants";
 
 import {
+    SAVE_PLAYER_NAME,
+    RESET_GAME,
     SET_GAME_IS_PAUSED,
     SPAWN_ENEMY,
     SET_CLOSEST_ENEMY,
     PLAYER_TYPED,
     ENEMY_SHOOT,
     UPDATE_HERO_POSITION,
-    INFLICT_DAMAGE
+    INFLICT_DAMAGE,
+    ENEMY_UNMOUNTED_AT,
+    SET_AUTHENTICATED
 } from "../action-types";
 
-import { getRandomLaneForEnemy } from "../../behaviour";
+import { getRandomLaneForEnemy } from "@game/behaviour";
 
 import { logGameOver } from "../../../firebase-events";
 
 
 const initialState = {
+    authenticated: false,
+    playerName: null,
+    gameIsReady: true,
     gameIsPaused: false,
     gameOver: false,
     enemies: [],
@@ -34,11 +41,33 @@ const initialState = {
     enemyShots: [],
     heroPosition: null,
     heroLife: HERO_LIFE,
+    score: 0,
+    tempKilledEnemiesScores: {}, // waiting for unmount position
+    killedEnemiesScores: [],
     killedEnemies: new Set() // this is always the same Set
 };
 
 function rootReducer(state = initialState, action) {
     switch (action.type) {
+        case SET_AUTHENTICATED:
+            return {
+                ...state,
+                authenticated: action.payload
+            };
+
+        case SAVE_PLAYER_NAME:
+            return {
+                ...state,
+                playerName: action.payload
+            };
+
+        case RESET_GAME:
+            return {
+                ...initialState,
+                authenticated: state.authenticated,
+                playerName: state.playerName
+            };
+
         case SET_GAME_IS_PAUSED:
             return {
                 ...state,
@@ -53,7 +82,7 @@ function rootReducer(state = initialState, action) {
             const id = new Date().getTime().toString();
             const lane = getRandomLaneForEnemy();
             const word = randomWords();
-            
+
             const enemies = [...state.enemies, {
                 id,
                 lane,
@@ -123,6 +152,15 @@ function rootReducer(state = initialState, action) {
                 const enemyIndex = enemies.findIndex(e => e.id === state.lockedEnemy);
                 enemies.splice(enemyIndex, 1);
 
+                const enemyScore = state.lockedWord.length * 10;
+
+                const score = state.score + enemyScore;
+
+                const tempKilledEnemiesScores = {
+                    ...state.tempKilledEnemiesScores,
+                    [state.lockedEnemy]: enemyScore
+                };
+
                 state.killedEnemies.add(state.lockedEnemy);
 
                 return {
@@ -130,7 +168,9 @@ function rootReducer(state = initialState, action) {
                     enemies,
                     lockedEnemy: null,
                     lockedWord: null,
-                    nextIndex: null
+                    nextIndex: null,
+                    score,
+                    tempKilledEnemiesScores
                 }
             }
             break;
@@ -150,6 +190,7 @@ function rootReducer(state = initialState, action) {
                 cos: Math.cos(angle),
                 isFromLockedEnemy: enemyId === state.lockedEnemy
             }];
+
             return { ...state, enemyShots };
         }
 
@@ -164,12 +205,13 @@ function rootReducer(state = initialState, action) {
             const shotIndex = enemyShots.findIndex(shot => shot.id === action.payload);
             const [shot] = enemyShots.splice(shotIndex, 1);
             const heroLife = state.heroLife - shot.damage;
-            
+
             if (heroLife <= 0) {
                 logGameOver(state.killedEnemies.size);
 
                 return {
-                    ...initialState,
+                    ...state,
+                    gameIsReady: false,
                     gameOver: true,
                     heroLife: 0
                 };
@@ -179,6 +221,29 @@ function rootReducer(state = initialState, action) {
                 ...state,
                 enemyShots,
                 heroLife
+            };
+        }
+
+        case ENEMY_UNMOUNTED_AT: {
+            const { enemyId, x, y } = action.payload;
+
+            const { [enemyId]: enemyScore, ...tempKilledEnemiesScores } = state.tempKilledEnemiesScores;
+            if (!enemyScore) {
+                break;
+            }
+
+            const killedEnemiesScores = [...state.killedEnemiesScores, {
+                score: enemyScore,
+                position: {
+                    x,
+                    y
+                }
+            }];
+
+            return {
+                ...state,
+                tempKilledEnemiesScores,
+                killedEnemiesScores
             };
         }
 

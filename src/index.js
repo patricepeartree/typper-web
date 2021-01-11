@@ -7,9 +7,10 @@ import * as serviceWorker from './serviceWorker';
 
 import './index.css';
 
-import store from './game/store';
-import "./assets/fonts/zombie.ttf";
-import "./assets/fonts/Creepster-Regular.ttf";
+import store from "@game/store";
+
+import "@assets/fonts/zombie.ttf";
+import "@assets/fonts/BadlyStamped.ttf";
 
 import { logGameStart } from "./firebase-events";
 

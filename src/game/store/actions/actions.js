@@ -1,12 +1,28 @@
 import {
+    SET_AUTHENTICATED,
+    SAVE_PLAYER_NAME,
+    RESET_GAME,
     SET_GAME_IS_PAUSED,
     SPAWN_ENEMY,
     SET_CLOSEST_ENEMY,
     PLAYER_TYPED,
     ENEMY_SHOOT,
     UPDATE_HERO_POSITION,
-    INFLICT_DAMAGE
+    INFLICT_DAMAGE,
+    ENEMY_UNMOUNTED_AT
 } from "../action-types";
+
+export function setAuthenticated(authenticated) {
+    return { type: SET_AUTHENTICATED, payload: authenticated };
+}
+
+export function savePlayerName(name) {
+    return { type: SAVE_PLAYER_NAME, payload: name };;
+}
+
+export function resetGame() {
+    return { type: RESET_GAME };
+}
 
 export function setGameIsPaused(gameIsPaused) {
     return { type: SET_GAME_IS_PAUSED, payload: gameIsPaused };
@@ -50,6 +66,16 @@ export function updateHeroPosition(x, y) {
     };
 }
 
-export function inflictDamage(missileId) {
-    return { type: INFLICT_DAMAGE, payload: missileId };
+export function inflictDamage(shotId) {
+    return { type: INFLICT_DAMAGE, payload: shotId };
+}
+
+export function enemyUnmountedAt(enemyId, x, y) {
+    return {
+        type: ENEMY_UNMOUNTED_AT, payload: {
+            enemyId,
+            x,
+            y
+        }
+    };
 }

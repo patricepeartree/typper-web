@@ -1,7 +1,7 @@
 import React from "react";
 import styled from "styled-components";
 
-import { ZIndexes } from "../constants";
+import { ZIndexes } from "@game/constants";
 
 
 //TODO: does this need to be a react component?

@@ -24,6 +24,3 @@ yarn-error.log*
 
 # firebase
 /.firebase
-
-# github actions
-/.github/*

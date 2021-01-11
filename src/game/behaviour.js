@@ -1,8 +1,8 @@
-import { MaleZombie } from "../assets/zombie";
-import { ENEMY_TO_WINDOW_HEIGHT_RATIO, SPAWNABLE_AREA_LEFT_ADJUSTMENT, SHOT_VELOCITY } from "./constants";
+import { MaleZombie } from "@assets/zombie";
+import { ENEMY_TO_WINDOW_HEIGHT_RATIO, SPAWNABLE_AREA_LEFT_ADJUSTMENT, SHOT_VELOCITY } from "@game/constants";
 
-export function moveMissile(missile, deltaT) {
-    const { x, y, sin, cos } = missile;
+export function moveShot(shot, deltaT) {
+    const { x, y, sin, cos } = shot;
     const deltaH = SHOT_VELOCITY * (deltaT / 1000);
     const deltaX = cos * deltaH;
     const deltaY = sin * deltaH;

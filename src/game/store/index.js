@@ -1,9 +1,9 @@
-import { createStore, applyMiddleware } from 'redux';
-import { createLogger } from 'redux-logger'
+import { createStore, applyMiddleware } from "redux";
+import { createLogger } from "redux-logger";
 
-import { REDUX_NO_LOG_ACTIONS } from '../constants/constants';
+import { REDUX_NO_LOG_ACTIONS } from "@game/constants";
 
-import rootReducer from './reducers';
+import rootReducer from "./reducers";
 
 function filterActions(getState, action) {
     return !REDUX_NO_LOG_ACTIONS.includes(action.type);

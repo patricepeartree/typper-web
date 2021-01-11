@@ -1,0 +1,7 @@
+FROM node:12.8.1
+
+RUN npm config set save-exact true
+
+RUN npm install -g firebase-tools@8.11.2
+
+WORKDIR /usr/src
